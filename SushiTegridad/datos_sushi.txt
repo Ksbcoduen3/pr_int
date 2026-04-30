@@ -1,0 +1,100 @@
+1234
+20
+Arroz_sushi 7.560000
+Vinagre_de_arroz 4.720000
+Salmon 10.000000
+Atun 9.100000
+Pepino 4.600000
+Aguacate 6.150000
+Alga_nori 6.500000
+Queso_crema 5.000000
+Camaron 5.070000
+Salsa_soya 5.000000
+Wasabi 2.000000
+Jengibre 2.000000
+Maiz 2.800000
+Zanahoria 5.000000
+Surimi 4.500000
+Mayo 1.940000
+Sesamo 1.860000
+Tobiko 0.920000
+Mango 5.000000
+Tempura 2.760000
+10
+Nigiri_Salmon 65.00 4
+Arroz_sushi 0.080000
+Salmon 0.050000
+Vinagre_de_arroz 0.010000
+Sesamo 0.005000
+Nigiri_Atun 70.00 4
+Arroz_sushi 0.080000
+Atun 0.050000
+Vinagre_de_arroz 0.010000
+Sesamo 0.005000
+Maki_Pepino 55.00 4
+Arroz_sushi 0.100000
+Alga_nori 0.050000
+Pepino 0.040000
+Vinagre_de_arroz 0.010000
+California_Roll 85.00 7
+Arroz_sushi 0.120000
+Alga_nori 0.050000
+Aguacate 0.040000
+Surimi 0.050000
+Maiz 0.020000
+Mayo 0.020000
+Sesamo 0.005000
+Spicy_Tuna_Roll 90.00 6
+Arroz_sushi 0.120000
+Alga_nori 0.050000
+Atun 0.060000
+Pepino 0.020000
+Mayo 0.020000
+Wasabi 0.005000
+Dragon_Roll 110.00 7
+Arroz_sushi 0.140000
+Alga_nori 0.050000
+Camaron 0.060000
+Aguacate 0.050000
+Tempura 0.030000
+Tobiko 0.010000
+Mayo 0.020000
+Philadelphia_Roll 95.00 5
+Arroz_sushi 0.120000
+Alga_nori 0.050000
+Salmon 0.060000
+Queso_crema 0.040000
+Pepino 0.020000
+Temaki_Camaron 80.00 5
+Arroz_sushi 0.100000
+Alga_nori 0.060000
+Camaron 0.070000
+Aguacate 0.030000
+Mayo 0.020000
+Sashimi_Mix 120.00 6
+Salmon 0.080000
+Atun 0.080000
+Camaron 0.050000
+Salsa_soya 0.020000
+Wasabi 0.005000
+Jengibre 0.005000
+Uramaki_Tropical 100.00 7
+Arroz_sushi 0.120000
+Alga_nori 0.050000
+Camaron 0.050000
+Mango 0.040000
+Aguacate 0.030000
+Tobiko 0.010000
+Sesamo 0.005000
+7
+California_Roll 10 850.00
+Nigiri_Atun 14 980.00
+Temaki_Camaron 35 2800.00
+Dragon_Roll 5 550.00
+Maki_Pepino 10 550.00
+Dragon_Roll 3 330.00
+Nigiri_Atun 4 280.00
+3
+Kenji Chef_Sushi 350.00 5
+Maria Mesera 180.00 6
+Roberto Administrativo 280.00 5

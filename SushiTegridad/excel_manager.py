@@ -104,6 +104,16 @@ def auto_ancho(ws):
 # ═══════════════════════════════════════════════════════════════
 def guardar():
     """Lee datos estructurados de stdin y genera el Excel profesional."""
+    # Protección para no sobreescribir la plantilla avanzada (Dashboards)
+    if os.path.exists(ARCHIVO_EXCEL):
+        try:
+            temp_wb = load_workbook(ARCHIVO_EXCEL, data_only=True)
+            if 'Ventas Diarias' in temp_wb.sheetnames or 'Portada' in temp_wb.sheetnames:
+                print(f"  [AVISO] Plantilla avanzada detectada en {ARCHIVO_EXCEL}. Se desactiva el guardado automático para proteger los gráficos y el formato.")
+                return
+        except Exception:
+            pass
+
     lineas = sys.stdin.read().strip().split('\n')
     idx = 0
 
@@ -349,18 +359,26 @@ def cargar():
     if 'Inventario' in wb.sheetnames:
         ws = wb['Inventario']
         filas = []
-        for row in ws.iter_rows(min_row=5, values_only=True):
-            if row[0] is None:
+        
+        start_row = 5
+        for i, row in enumerate(ws.iter_rows(min_row=1, max_row=10, values_only=True), 1):
+            if row[0] == 1 or str(row[0]) == '1':
+                start_row = i
                 break
+                
+        for row in ws.iter_rows(min_row=start_row, values_only=True):
+            if row[0] is None:
+                continue
             nombre = str(row[1]).replace(' ', '_') if row[1] else ''
+            if not nombre: continue
             cantidad = float(row[2]) if row[2] else 0.0
             dias_cad_raw = row[3]
             if dias_cad_raw is None or str(dias_cad_raw).strip().upper() == 'N/A':
                 dias_cad = 0
             else:
-                dias_cad = int(dias_cad_raw)
+                try: dias_cad = int(dias_cad_raw)
+                except ValueError: dias_cad = 0
             fecha = str(row[4]) if row[4] else date.today().isoformat()
-            # Limpiar fecha si viene con hora
             if ' ' in fecha:
                 fecha = fecha.split(' ')[0]
             filas.append(f"{nombre} {cantidad:.6f} {dias_cad} {fecha}")
@@ -374,15 +392,22 @@ def cargar():
     if 'Carta' in wb.sheetnames:
         ws = wb['Carta']
         platillos = []
-        for row in ws.iter_rows(min_row=5, values_only=True):
-            if row[0] is None:
+        
+        start_row = 5
+        for i, row in enumerate(ws.iter_rows(min_row=1, max_row=10, values_only=True), 1):
+            if row[0] == 1 or str(row[0]) == '1':
+                start_row = i
                 break
+                
+        for row in ws.iter_rows(min_row=start_row, values_only=True):
+            if row[0] is None:
+                continue
             nombre = str(row[1]).replace(' ', '_') if row[1] else ''
+            if not nombre: continue
             precio = float(row[2]) if row[2] else 0.0
             receta_txt = str(row[3]) if row[3] else ''
-            # Parsear receta: "Arroz sushi (0.080), Salmon (0.050)"
             ingredientes_receta = []
-            if receta_txt:
+            if receta_txt and '(' in receta_txt and ')' in receta_txt:
                 partes = receta_txt.split(', ')
                 for parte in partes:
                     parte = parte.strip()
@@ -405,19 +430,44 @@ def cargar():
         print(0)
 
     # ── Ventas ────────────────────────────────────────────────
-    if 'Ventas' in wb.sheetnames:
-        ws = wb['Ventas']
+    hoja_ventas_nombre = None
+    for n in wb.sheetnames:
+        if 'Ventas' in n:
+            hoja_ventas_nombre = n
+            break
+
+    if hoja_ventas_nombre:
+        ws = wb[hoja_ventas_nombre]
         ventas_filas = []
-        for row in ws.iter_rows(min_row=5, values_only=True):
+        is_advanced = ('Diarias' in hoja_ventas_nombre)
+        
+        start_row = 5
+        for i, row in enumerate(ws.iter_rows(min_row=1, max_row=10, values_only=True), 1):
+            if row[0] == 1 or str(row[0]) == '1':
+                start_row = i
+                break
+
+        for row in ws.iter_rows(min_row=start_row, values_only=True):
             if row[0] is None:
+                continue
+            if isinstance(row[0], str) and ('TOTAL' in str(row[0]).upper() or 'NO.' in str(row[0]).upper()):
                 break
-            # Ignorar fila de total
-            if isinstance(row[0], str) and 'TOTAL' in str(row[0]).upper():
-                break
-            platillo = str(row[1]).replace(' ', '_') if row[1] else ''
-            cantidad = int(row[2]) if row[2] else 0
-            total = float(row[3]) if row[3] else 0.0
-            ventas_filas.append(f"{platillo} {cantidad} {total:.2f}")
+                
+            if is_advanced:
+                platillo = str(row[5]).replace(' ', '_') if len(row) > 5 and row[5] else ''
+                if not platillo: continue
+                try:
+                    cantidad = int(row[8]) if len(row) > 8 and row[8] else 0
+                    total = float(row[9]) if len(row) > 9 and row[9] else 0.0
+                except (ValueError, TypeError):
+                    continue
+                ventas_filas.append(f"{platillo} {cantidad} {total:.2f}")
+            else:
+                platillo = str(row[1]).replace(' ', '_') if row[1] else ''
+                if not platillo: continue
+                cantidad = int(row[2]) if row[2] else 0
+                total = float(row[3]) if row[3] else 0.0
+                ventas_filas.append(f"{platillo} {cantidad} {total:.2f}")
         print(len(ventas_filas))
         for f in ventas_filas:
             print(f)
@@ -428,13 +478,27 @@ def cargar():
     if 'Empleados' in wb.sheetnames:
         ws = wb['Empleados']
         emp_filas = []
-        for row in ws.iter_rows(min_row=5, values_only=True):
+        
+        start_row = 5
+        for i, row in enumerate(ws.iter_rows(min_row=1, max_row=10, values_only=True), 1):
+            if row[0] == 1 or str(row[0]) == '1':
+                start_row = i
+                break
+                
+        for row in ws.iter_rows(min_row=start_row, values_only=True):
             if row[0] is None:
+                continue
+            if isinstance(row[0], str) and 'TOTAL' in str(row[0]).upper():
                 break
             nombre = str(row[1]).replace(' ', '_') if row[1] else ''
+            if not nombre: continue
             puesto = str(row[2]).replace(' ', '_') if row[2] else ''
-            sueldo = float(row[3]) if row[3] else 0.0
-            dias = int(row[4]) if row[4] else 0
+            try:
+                sueldo = float(row[3]) if row[3] else 0.0
+                dias = int(row[4]) if row[4] else 0
+            except (ValueError, TypeError):
+                sueldo = 0.0
+                dias = 0
             emp_filas.append(f"{nombre} {puesto} {sueldo:.2f} {dias}")
         print(len(emp_filas))
         for f in emp_filas:

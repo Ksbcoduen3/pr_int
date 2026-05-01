@@ -6,18 +6,19 @@ import java.util.Map;
  * Usa un script Python (excel_manager.py) para leer/escribir
  * directamente al archivo Excel (SushiTegridad_Analytics.xlsx).
  *
- * Flujo de guardado:  Java → pipe stdin → Python → Excel
- * Flujo de carga:     Excel → Python → pipe stdout → Java
+ * Flujo de guardado: Java → pipe stdin → Python → Excel
+ * Flujo de carga: Excel → Python → pipe stdout → Java
  */
 public class GestorArchivos {
 
     // ════════════════════════════════════════════════════════════
-    //  GUARDAR DATOS → EXCEL
+    // GUARDAR DATOS → EXCEL
     // ════════════════════════════════════════════════════════════
     public static void guardarDatos(String contrasena, Almacen almacen,
-                                    ModuloVentas ventas, RecursosHumanos rrhh) {
+            ModuloVentas ventas) {
         String scriptPath = buscarScript();
-        if (scriptPath == null) return;
+        if (scriptPath == null)
+            return;
         String pythonExe = detectarPython();
 
         System.out.println("\n  Guardando datos en Excel...");
@@ -59,12 +60,6 @@ public class GestorArchivos {
                     pw.printf("%s %d %.2f%n", v.getNombrePlatillo(), v.getCantidad(), v.getTotal());
                 }
 
-                // Empleados
-                pw.println(rrhh.getEmpleados().size());
-                for (Empleado e : rrhh.getEmpleados()) {
-                    pw.printf("%s %s %.2f %d%n",
-                            e.getNombre(), e.getPuesto(), e.getSueldoDiario(), e.getDiasSemana());
-                }
             }
 
             // ── Leer salida del script ───────────────────────────
@@ -94,9 +89,9 @@ public class GestorArchivos {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  CARGAR DATOS ← EXCEL
+    // CARGAR DATOS ← EXCEL
     // ════════════════════════════════════════════════════════════
-    public static String cargarDatos(Almacen almacen, ModuloVentas ventas, RecursosHumanos rrhh) {
+    public static String cargarDatos(Almacen almacen, ModuloVentas ventas) {
         String scriptPath = buscarScript();
         if (scriptPath == null) {
             System.out.println("[INFO] Script excel_manager.py no encontrado. Primera ejecucion.");
@@ -161,14 +156,6 @@ public class GestorArchivos {
                         new Venta(vp[0], Integer.parseInt(vp[1]), Float.parseFloat(vp[2])));
             }
 
-            // ── Empleados ────────────────────────────────────────
-            int numEmp = Integer.parseInt(br.readLine().trim());
-            for (int i = 0; i < numEmp; i++) {
-                String[] ep = br.readLine().trim().split(" ");
-                rrhh.getEmpleados().add(
-                        new Empleado(ep[0], ep[1], Float.parseFloat(ep[2]), Integer.parseInt(ep[3])));
-            }
-
             // Leer errores si los hay
             BufferedReader errBr = new BufferedReader(
                     new InputStreamReader(proc.getErrorStream(), "UTF-8"));
@@ -186,25 +173,25 @@ public class GestorArchivos {
             almacen.getIngredientes().clear();
             ventas.getPlatillos().clear();
             ventas.getVentas().clear();
-            rrhh.getEmpleados().clear();
             return null;
         }
     }
 
     // ════════════════════════════════════════════════════════════
-    //  UTILIDADES INTERNAS
+    // UTILIDADES INTERNAS
     // ════════════════════════════════════════════════════════════
 
     /** Busca el script excel_manager.py en varias ubicaciones. */
     private static String buscarScript() {
         String userDir = System.getProperty("user.dir");
         String[] candidatos = {
-            "excel_manager.py",
-            userDir + File.separator + "excel_manager.py",
-            userDir + File.separator + ".." + File.separator + "excel_manager.py"
+                "excel_manager.py",
+                userDir + File.separator + "excel_manager.py",
+                userDir + File.separator + ".." + File.separator + "excel_manager.py"
         };
         for (String ruta : candidatos) {
-            if (new File(ruta).exists()) return ruta;
+            if (new File(ruta).exists())
+                return ruta;
         }
         System.out.println("[AVISO] excel_manager.py no encontrado. Coloca el script junto al programa.");
         return null;
@@ -212,10 +199,11 @@ public class GestorArchivos {
 
     /** Detecta el ejecutable de Python disponible en el sistema. */
     private static String detectarPython() {
-        for (String py : new String[]{"py", "python", "python3"}) {
+        for (String py : new String[] { "py", "python", "python3" }) {
             try {
-                Process check = Runtime.getRuntime().exec(new String[]{py, "--version"});
-                if (check.waitFor() == 0) return py;
+                Process check = Runtime.getRuntime().exec(new String[] { py, "--version" });
+                if (check.waitFor() == 0)
+                    return py;
             } catch (Exception ignored) {
                 // Ignorado intencionalmente
             }

@@ -163,18 +163,6 @@ def guardar():
             'total': float(partes[2])
         })
 
-    # Empleados
-    num_emp = int(leer())
-    empleados = []
-    for _ in range(num_emp):
-        partes = leer().split()
-        empleados.append({
-            'nombre': partes[0],
-            'puesto': partes[1],
-            'sueldoDiario': float(partes[2]),
-            'diasSemana': int(partes[3])
-        })
-
     # ── Generar Excel ─────────────────────────────────────────
     wb = Workbook()
 
@@ -297,29 +285,7 @@ def guardar():
 
     auto_ancho(ws_ventas)
 
-    # ─── Hoja: Empleados ──────────────────────────────────────
-    ws_emp = wb.create_sheet('Empleados')
-    escribir_titulo(ws_emp, '👥 RECURSOS HUMANOS — SUSHI TEGRIDAD', 6)
-    headers_emp = ['No.', 'Nombre', 'Puesto', 'Sueldo Diario', 'Días/Semana', 'Sueldo Semanal']
-    escribir_headers(ws_emp, 4, headers_emp)
 
-    for i, emp in enumerate(empleados):
-        fila = 5 + i
-        par = i % 2 == 0
-        sueldo_semanal = emp['sueldoDiario'] * emp['diasSemana']
-        ws_emp.cell(row=fila, column=1, value=i + 1)
-        ws_emp.cell(row=fila, column=2, value=emp['nombre'].replace('_', ' '))
-        ws_emp.cell(row=fila, column=3, value=emp['puesto'].replace('_', ' '))
-        celda_sd = ws_emp.cell(row=fila, column=4, value=emp['sueldoDiario'])
-        celda_sd.number_format = '$#,##0.00'
-        ws_emp.cell(row=fila, column=5, value=emp['diasSemana'])
-        celda_ss = ws_emp.cell(row=fila, column=6, value=sueldo_semanal)
-        celda_ss.number_format = '$#,##0.00'
-        for col in range(1, 7):
-            estilo_celda(ws_emp.cell(row=fila, column=col), par,
-                         ALIGN_CENTER if col in (1, 5) else (ALIGN_RIGHT if col in (4, 6) else ALIGN_LEFT))
-
-    auto_ancho(ws_emp)
 
     # ─── Hoja oculta: _config (guarda contraseña) ─────────────
     ws_cfg = wb.create_sheet('_config')
@@ -474,37 +440,7 @@ def cargar():
     else:
         print(0)
 
-    # ── Empleados ─────────────────────────────────────────────
-    if 'Empleados' in wb.sheetnames:
-        ws = wb['Empleados']
-        emp_filas = []
-        
-        start_row = 5
-        for i, row in enumerate(ws.iter_rows(min_row=1, max_row=10, values_only=True), 1):
-            if row[0] == 1 or str(row[0]) == '1':
-                start_row = i
-                break
-                
-        for row in ws.iter_rows(min_row=start_row, values_only=True):
-            if row[0] is None:
-                continue
-            if isinstance(row[0], str) and 'TOTAL' in str(row[0]).upper():
-                break
-            nombre = str(row[1]).replace(' ', '_') if row[1] else ''
-            if not nombre: continue
-            puesto = str(row[2]).replace(' ', '_') if row[2] else ''
-            try:
-                sueldo = float(row[3]) if row[3] else 0.0
-                dias = int(row[4]) if row[4] else 0
-            except (ValueError, TypeError):
-                sueldo = 0.0
-                dias = 0
-            emp_filas.append(f"{nombre} {puesto} {sueldo:.2f} {dias}")
-        print(len(emp_filas))
-        for f in emp_filas:
-            print(f)
-    else:
-        print(0)
+
 
 
 # ═══════════════════════════════════════════════════════════════

@@ -2,15 +2,15 @@ import java.util.Scanner;
 
 /**
  * ╔══════════════════════════════════════════════╗
- *   SUSHI TEGRIDAD — Sistema de Gestión
- *   Punto de entrada principal de la aplicación.
+ * SUSHI TEGRIDAD — Sistema de Gestión
+ * Punto de entrada principal de la aplicación.
  * ╚══════════════════════════════════════════════╝
  *
  * Responsabilidades de esta clase:
- *  • Inicializar los módulos y cargar datos persistidos.
- *  • Gestionar el flujo de login.
- *  • Orquestar el menú principal y delegar a cada módulo.
- *  • Guardar datos al salir.
+ * • Inicializar los módulos y cargar datos persistidos.
+ * • Gestionar el flujo de login.
+ * • Orquestar el menú principal y delegar a cada módulo.
+ * • Guardar datos al salir.
  */
 public class Main {
 
@@ -19,22 +19,21 @@ public class Main {
 
     // Contraseña mutable: se usa un arreglo de un elemento para poder
     // modificarla desde métodos sin retornar el valor.
-    private static String[] config = {"1234"};
+    private static String[] config = { "1234" };
 
     private static Scanner sc = new Scanner(System.in);
 
     // ════════════════════════════════════════════════════════════
-    //  PUNTO DE ENTRADA
+    // PUNTO DE ENTRADA
     // ════════════════════════════════════════════════════════════
     public static void main(String[] args) {
 
         // ── 1. Crear módulos ─────────────────────────────────────
-        Almacen         almacen = new Almacen();
-        ModuloVentas    ventas  = new ModuloVentas(almacen);
-        RecursosHumanos rrhh    = new RecursosHumanos();
+        Almacen almacen = new Almacen();
+        ModuloVentas ventas = new ModuloVentas(almacen);
 
         // ── 2. Cargar datos persistidos ──────────────────────────
-        String contrasenaGuardada = GestorArchivos.cargarDatos(almacen, ventas, rrhh);
+        String contrasenaGuardada = GestorArchivos.cargarDatos(almacen, ventas);
         if (contrasenaGuardada != null) {
             config[0] = contrasenaGuardada;
         }
@@ -44,10 +43,7 @@ public class Main {
             System.out.println("[INFO] Sin ingredientes. Cargando inventario inicial de sushi.");
             almacen.inicializarDefecto();
         }
-        if (rrhh.getEmpleados().isEmpty()) {
-            System.out.println("[INFO] Sin empleados. Cargando plantilla inicial.");
-            rrhh.inicializarDefecto();
-        }
+
         if (ventas.getPlatillos().isEmpty()) {
             System.out.println("[INFO] Sin platillos. Cargando carta inicial de sushi.");
             ventas.inicializarDefecto(almacen);
@@ -62,17 +58,19 @@ public class Main {
         }
 
         // ── 5. Menú principal ────────────────────────────────────
-        menuPrincipal(almacen, ventas, rrhh);
+        menuPrincipal(almacen, ventas);
 
         sc.close();
     }
 
     // ════════════════════════════════════════════════════════════
-    //  LOGIN
+    // LOGIN
     // ════════════════════════════════════════════════════════════
     /**
      * Muestra la pantalla de login.
-     * @return {@code true} si el acceso fue concedido, {@code false} si el usuario eligió salir.
+     * 
+     * @return {@code true} si el acceso fue concedido, {@code false} si el usuario
+     *         eligió salir.
      */
     private static boolean login() {
         int opcion;
@@ -89,7 +87,7 @@ public class Main {
             switch (opcion) {
                 case 1:
                     System.out.print("Usuario: ");
-                    String usuario   = Util.leerString(sc);
+                    String usuario = Util.leerString(sc);
                     System.out.print("Contrasena: ");
                     String contrasena = Util.leerString(sc);
 
@@ -116,9 +114,9 @@ public class Main {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  MENÚ PRINCIPAL
+    // MENÚ PRINCIPAL
     // ════════════════════════════════════════════════════════════
-    private static void menuPrincipal(Almacen almacen, ModuloVentas ventas, RecursosHumanos rrhh) {
+    private static void menuPrincipal(Almacen almacen, ModuloVentas ventas) {
         int opcion;
         do {
             Util.limpiarConsola();
@@ -127,9 +125,8 @@ public class Main {
             System.out.println("╚══════════════════════════════════════╝");
             System.out.println("1. Almacen");
             System.out.println("2. Ventas");
-            System.out.println("3. Recursos Humanos");
-            System.out.println("4. Configuracion");
-            System.out.println("5. Salir (y Guardar)");
+            System.out.println("3. Configuracion");
+            System.out.println("4. Salir (y Guardar)");
             System.out.print("Seleccione una opcion: ");
             opcion = Util.leerInt(sc);
 
@@ -141,13 +138,10 @@ public class Main {
                     ventas.mostrarMenu(sc);
                     break;
                 case 3:
-                    rrhh.mostrarMenu(sc);
-                    break;
-                case 4:
                     configuracion();
                     break;
-                case 5:
-                    GestorArchivos.guardarDatos(config[0], almacen, ventas, rrhh);
+                case 4:
+                    GestorArchivos.guardarDatos(config[0], almacen, ventas);
                     System.out.println("\n  ¡Gracias por usar SUSHI TEGRIDAD! 🍣");
                     Util.pausa(sc);
                     break;
@@ -156,11 +150,11 @@ public class Main {
                     Util.pausa(sc);
                     break;
             }
-        } while (opcion != 5);
+        } while (opcion != 4);
     }
 
     // ════════════════════════════════════════════════════════════
-    //  CONFIGURACIÓN
+    // CONFIGURACIÓN
     // ════════════════════════════════════════════════════════════
     private static void configuracion() {
         Util.limpiarConsola();

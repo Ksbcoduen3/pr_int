@@ -17,7 +17,7 @@ public class Almacen {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  MENÚ PRINCIPAL DEL MÓDULO
+    // MENÚ PRINCIPAL DEL MÓDULO
     // ════════════════════════════════════════════════════════════
     public void mostrarMenu(Scanner sc) {
         int opcion;
@@ -36,12 +36,23 @@ public class Almacen {
             opcion = Util.leerInt(sc);
 
             switch (opcion) {
-                case 1: verInventario(sc);          break;
-                case 2: agregarIngrediente(sc);     break;
-                case 3: modificarCantidad(sc);      break;
-                case 4: eliminarIngrediente(sc);    break;
-                case 5: revisarCaducidad(sc);       break;
-                case 6:                             break;
+                case 1:
+                    verInventario(sc);
+                    break;
+                case 2:
+                    agregarIngrediente(sc);
+                    break;
+                case 3:
+                    modificarCantidad(sc);
+                    break;
+                case 4:
+                    eliminarIngrediente(sc);
+                    break;
+                case 5:
+                    revisarCaducidad(sc);
+                    break;
+                case 6:
+                    break;
                 default:
                     System.out.println("Opcion invalida.");
                     Util.pausa(sc);
@@ -51,7 +62,7 @@ public class Almacen {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  OPERACIONES
+    // OPERACIONES
     // ════════════════════════════════════════════════════════════
 
     /** Muestra la tabla completa de ingredientes con estado de caducidad. */
@@ -71,7 +82,8 @@ public class Almacen {
                     ing.getFechaRegistro(),
                     ing.estadoCaducidad());
         }
-        if (ingredientes.isEmpty()) System.out.println("  (sin ingredientes registrados)");
+        if (ingredientes.isEmpty())
+            System.out.println("  (sin ingredientes registrados)");
         Util.pausa(sc);
     }
 
@@ -90,7 +102,8 @@ public class Almacen {
         float cant = Util.leerFloat(sc);
         System.out.print("Dias de caducidad (0 = no caduca): ");
         int dias = Util.leerInt(sc);
-        if (dias < 0) dias = 0;
+        if (dias < 0)
+            dias = 0;
 
         ingredientes.add(new Ingrediente(nombre, cant, dias, LocalDate.now().toString()));
         System.out.println("  ✔ Ingrediente agregado.");
@@ -147,7 +160,8 @@ public class Almacen {
         boolean hayAlerta = false;
         for (int i = 0; i < ingredientes.size(); i++) {
             Ingrediente ing = ingredientes.get(i);
-            if (ing.getDiasCaducidad() == 0) continue; // ignorar los que no caducan
+            if (ing.getDiasCaducidad() == 0)
+                continue; // ignorar los que no caducan
             long restantes = ing.diasRestantes();
             if (restantes <= 3) { // mostrar si le quedan 3 días o menos
                 hayAlerta = true;
@@ -169,13 +183,14 @@ public class Almacen {
     }
 
     // ════════════════════════════════════════════════════════════
-    //  MÉTODOS DE APOYO (usados por otros módulos)
+    // MÉTODOS DE APOYO (usados por otros módulos)
     // ════════════════════════════════════════════════════════════
 
     /** Busca un ingrediente por nombre (ignorando mayúsculas). */
     public Ingrediente buscarPorNombre(String nombre) {
         for (Ingrediente ing : ingredientes) {
-            if (ing.getNombre().equalsIgnoreCase(nombre)) return ing;
+            if (ing.getNombre().equalsIgnoreCase(nombre))
+                return ing;
         }
         return null;
     }
@@ -190,37 +205,41 @@ public class Almacen {
         }
     }
 
-    public ArrayList<Ingrediente> getIngredientes() { return ingredientes; }
+    public ArrayList<Ingrediente> getIngredientes() {
+        return ingredientes;
+    }
 
     // ════════════════════════════════════════════════════════════
-    //  DATOS POR DEFECTO
+    // DATOS POR DEFECTO
     // ════════════════════════════════════════════════════════════
 
-    /** Carga un inventario inicial de ingredientes de sushi con caducidad realista. */
+    /**
+     * Carga un inventario inicial de ingredientes de sushi con caducidad realista.
+     */
     public void inicializarDefecto() {
         String hoy = LocalDate.now().toString();
         // nombre, cantidad, días caducidad
         Object[][] datos = {
-            {"Arroz_sushi",       20f,  2},   // arroz preparado
-            {"Vinagre_de_arroz",   5f,  0},   // larga duración
-            {"Salmon",            10f,  3},   // proteína fresca
-            {"Atun",              10f,  3},
-            {"Pepino",             5f,  5},   // vegetal fresco
-            {"Aguacate",           8f,  5},
-            {"Alga_nori",         10f,  0},   // seco, larga duración
-            {"Queso_crema",        5f, 14},   // refrigerado
-            {"Camaron",            8f,  3},   // proteína fresca
-            {"Salsa_soya",         5f,  0},   // larga duración
-            {"Wasabi",             2f, 30},   // conservado
-            {"Jengibre",           2f, 30},
-            {"Maiz",               3f,  0},   // enlatado/seco
-            {"Zanahoria",          5f,  5},   // vegetal fresco
-            {"Surimi",             5f,  5},
-            {"Mayo",               3f, 14},   // refrigerado
-            {"Sesamo",             2f,  0},   // seco
-            {"Tobiko",             1f,  5},
-            {"Mango",              5f,  5},   // fruta fresca
-            {"Tempura",            3f,  0},   // mezcla seca
+                { "Arroz_sushi", 20f, 2 }, // arroz preparado
+                { "Vinagre_de_arroz", 5f, 0 }, // larga duración
+                { "Salmon", 10f, 3 }, // proteína fresca
+                { "Atun", 10f, 3 },
+                { "Pepino", 5f, 5 }, // vegetal fresco
+                { "Aguacate", 8f, 5 },
+                { "Alga_nori", 10f, 0 }, // seco, larga duración
+                { "Queso_crema", 5f, 14 }, // refrigerado
+                { "Camaron", 8f, 3 }, // proteína fresca
+                { "Salsa_soya", 5f, 0 }, // larga duración
+                { "Wasabi", 2f, 30 }, // conservado
+                { "Jengibre", 2f, 30 },
+                { "Maiz", 3f, 0 }, // enlatado/seco
+                { "Zanahoria", 5f, 5 }, // vegetal fresco
+                { "Surimi", 5f, 5 },
+                { "Mayo", 3f, 14 }, // refrigerado
+                { "Sesamo", 2f, 0 }, // seco
+                { "Tobiko", 1f, 5 },
+                { "Mango", 5f, 5 }, // fruta fresca
+                { "Tempura", 3f, 0 }, // mezcla seca
         };
         for (Object[] d : datos) {
             ingredientes.add(new Ingrediente(
